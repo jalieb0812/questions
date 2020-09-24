@@ -141,7 +141,8 @@ def top_files(query, files, idfs, n):
 
     for file in files:
 
-        match_words = list([word for word in query if word in files[file]])
+        # get all words in file that are in query
+        match_words = set([word for word in query if word in files[file]])
 
         frequencies = dict()
 
@@ -149,25 +150,29 @@ def top_files(query, files, idfs, n):
 
         for word in match_words:
 
-
+            #create dict with words and idf value
             word_idfs[word] = idfs[word]
 
+            #create dict with word and td
             frequencies[word] = files[file].count(word)
 
+        # create dict that matches file to td_idf values
         files_td_idf[file] = sum(word_idfs[word] * frequencies[word] for word in match_words)
 
-    print(files_td_idf)
+    #print(files_td_idf)
+
+    #sort file in reverse ny td_idf value
     sorted_files = {k: v for k, v in sorted(files_td_idf.items(),
                 key=lambda item: item[1], reverse = True)}
 
 
-    print(sorted_files)
-
+    #print(sorted_files)
+    #put soted dict keys (files) into list
     top_files = list([file for file in sorted_files])
 
 
 
-    print(top_files[:n])
+    #print(top_files[:n])
 
     return top_files[:n]
 
@@ -182,7 +187,41 @@ def top_sentences(query, sentences, idfs, n):
     the query, ranked according to idf. If there are ties, preference should
     be given to sentences that have a higher query term density.
     """
-    raise NotImplementedError
+
+    ranked_sentences = []
+
+    word_idfs_density = dict()
+
+    for sentence in sentences:
+
+        match_words = set([word for word in query if word in sentences[sentence]])
+
+        term_density = float(len(match_words) / len(sentences[sentence]))
+
+
+        word_tf = 0
+
+        for word in match_words:
+
+            word_tf += idfs[word]
+
+        word_idfs_density[sentence] = word_tf, term_density
+
+    sorted_sentences = {k: v for k, v in sorted(word_idfs_density.items(),
+                key=lambda item: (item[1][0], item[1][1]), reverse = True)}
+
+
+
+    #print(word_idfs_density)
+
+    #print(sorted_sentences)
+
+    top_sentences = list([sentence for sentence in sorted_sentences])[:n]
+
+    #print(top_sentences)
+
+
+    return top_sentences
 
 
 #def get_tf(word, file):

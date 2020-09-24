@@ -1,6 +1,10 @@
 import nltk
+nltk.download('stopwords')
 import sys
 import os
+import string
+
+from nltk.tokenize import word_tokenize
 
 FILE_MATCHES = 1
 SENTENCE_MATCHES = 1
@@ -55,7 +59,7 @@ def load_files(directory):
         with open(os.path.join(directory, dir)) as f:
             corpus_dict[dir] = f.read()
 
-    print(corpus_dict['python.txt'])
+    #print(corpus_dict['python.txt'])
 
     return corpus_dict
 
@@ -68,7 +72,26 @@ def tokenize(document):
     Process document by coverting all words to lowercase, and removing any
     punctuation or English stopwords.
     """
-    raise NotImplementedError
+
+    token_document = word_tokenize(document)
+
+    #print (token_document)
+
+    document_words = []
+
+    for word in token_document:
+        if word not in string.punctuation and \
+        word not in nltk.corpus.stopwords.words('english'):
+
+            word = word.lower()
+
+            document_words.append(word)
+
+
+    print(document_words)
+
+    return document_words
+    #raise NotImplementedError
 
 
 def compute_idfs(documents):

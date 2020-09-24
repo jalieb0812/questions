@@ -1,6 +1,7 @@
 import nltk
-nltk.download('stopwords')
+#nltk.download('stopwords')
 import sys
+import math
 import os
 import string
 
@@ -88,7 +89,7 @@ def tokenize(document):
             document_words.append(word)
 
 
-    print(document_words)
+    #print(document_words)
 
     return document_words
     #raise NotImplementedError
@@ -102,7 +103,28 @@ def compute_idfs(documents):
     Any word that appears in at least one of the documents should be in the
     resulting dictionary.
     """
-    raise NotImplementedError
+
+
+    num_documents = len(documents)
+
+    words = set()
+
+    for filename in documents:
+        words.update(documents[filename])
+
+    #print(words)
+    idf_dict = {}
+
+    for word in words:
+
+        f = sum(word in documents[filename] for filename in documents)
+        idf = math.log(num_documents / f)
+        idf_dict[word] = idf
+
+
+    #print(idf_dict)
+
+    return idf_dict
 
 
 def top_files(query, files, idfs, n):
@@ -112,7 +134,44 @@ def top_files(query, files, idfs, n):
     to their IDF values), return a list of the filenames of the the `n` top
     files that match the query, ranked according to tf-idf.
     """
-    raise NotImplementedError
+
+
+    files_td_idf = {}
+
+
+    for file in files:
+
+        match_words = list([word for word in query if word in files[file]])
+
+        frequencies = dict()
+
+        word_idfs = dict()
+
+        for word in match_words:
+
+
+            word_idfs[word] = idfs[word]
+
+            frequencies[word] = files[file].count(word)
+
+        files_td_idf[file] = sum(word_idfs[word] * frequencies[word] for word in match_words)
+
+    print(files_td_idf)
+    sorted_files = {k: v for k, v in sorted(files_td_idf.items(),
+                key=lambda item: item[1], reverse = True)}
+
+
+    print(sorted_files)
+
+    top_files = list([file for file in sorted_files])
+
+
+
+    print(top_files[:n])
+
+    return top_files[:n]
+
+
 
 
 def top_sentences(query, sentences, idfs, n):
@@ -124,6 +183,9 @@ def top_sentences(query, sentences, idfs, n):
     be given to sentences that have a higher query term density.
     """
     raise NotImplementedError
+
+
+#def get_tf(word, file):
 
 
 if __name__ == "__main__":

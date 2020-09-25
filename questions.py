@@ -74,17 +74,19 @@ def tokenize(document):
     punctuation or English stopwords.
     """
 
-    token_document = word_tokenize(document)
+    token_document = word_tokenize(document.lower())
 
     #print (token_document)
 
     document_words = []
 
     for word in token_document:
+        #word = word.lower()
+
         if word not in string.punctuation and \
         word not in nltk.corpus.stopwords.words('english'):
 
-            word = word.lower()
+            #word = word.lower()
 
             document_words.append(word)
 

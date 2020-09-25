@@ -1,3 +1,4 @@
+import nltk
 import markovify
 import sys
 
